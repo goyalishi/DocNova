@@ -1,25 +1,18 @@
-import './App.css'
-import axios from 'axios';
-import {useEffect} from 'react';
-function App() {
-  
-  useEffect(()=>{
-    
-    axios.get('http://localhost:3000/api/test') 
-    .then((response) => {
-      console.log(response.data);
-      
-    })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-    });
-},[]);
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./components/LoginPage";
+import SignupPage from "./components/SignupPage";
 
-  return (
-    <>
-    <h1>DocNova</h1>
-    </>
-  )
-}
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+            </Routes>
+        </Router>
+    );
+};
 
-export default App
+export default App;
