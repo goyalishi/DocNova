@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import {useGoogleLogin } from '@react-oauth/google'
-import { googleOauth } from "../api";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import GoogleSignIn from "./GoogleSignIn";
+
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
@@ -31,11 +32,17 @@ const LoginPage = () => {
       );
 
       const { msg, success, jwtToken, name } = response.data;
+      const user ={
+        name:name,
+        email:response.data.email
+      }
+      
 
       if (success) {
         toast.success(msg);
         localStorage.setItem("token", jwtToken);
         localStorage.setItem("loggedInUser", name);
+        localStorage.setItem("user-info", JSON.stringify(user));
         setTimeout(() => {
           navigate("/home");
         }, 1000);
@@ -68,31 +75,7 @@ const LoginPage = () => {
     }));
   };
 
-  const responseGoogle = async (authResult) => {
-    try {
-      if(authResult['code']){
-        const result = await googleOauth(authResult['code']);
-        const {email,name} = result.data.user;
-        const {token} = result.data;
-        localStorage.setItem('token',token);
-        navigate('/home');
-      }
-    console.log(authResult);
-      
-    } catch (error) {
-      console.log(error.response);
-      
-    }   
-};
-
-  const googleLogin = useGoogleLogin({
-    onSuccess:responseGoogle,
-    onError : responseGoogle,
-    flow: 'auth-code'
-  })
-
   return (
-    
     <div className="flex justify-center items-center min-h-screen ">
       <div
         className={`w-full max-w-md rounded-2xl shadow-2xl backdrop-blur-lg p-8 transition-all duration-300 ease-in-out ${
@@ -105,19 +88,10 @@ const LoginPage = () => {
           Sign in
         </h1>
         <p className=" text-center mb-6">to continue to DocNova</p>
-       
-        <button
-          className="w-full flex items-center justify-center gap-2 bg-gray-300 border border-gray-600 rounded-lg py-2 px-4 text-black hover:bg-gray-400 transition duration-300 ease-in-out mb-4"
-          onClick={googleLogin}
-        >
-          <img
-            src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png"
-            alt="Google Icon"
-            className="w-6 h-6"
-          />
-          Sign in with Google
-        </button>
-        
+
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <GoogleSignIn buttonText="Sign in with Google" />
+        </GoogleOAuthProvider>
 
         <div className="relative mb-6">
           <hr className="border-gray-600" />
@@ -168,7 +142,6 @@ const LoginPage = () => {
         </p>
       </div>
     </div>
-    
   );
 };
 

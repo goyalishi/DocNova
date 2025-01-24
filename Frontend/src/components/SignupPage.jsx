@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import GoogleSignIn from "./GoogleSignIn";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const SignupPage = () => {
   const [signUpData, setSignUpData] = useState({
@@ -91,17 +93,11 @@ const SignupPage = () => {
         <p className="text-black text-center mb-6">
           to continue to DocNova
         </p>
-        <button
-          className="w-full flex items-center justify-center gap-2 bg-gray-300 border border-gray-600 rounded-lg py-2 px-4  hover:bg-gray-400 transition duration-300 ease-in-out mb-4"
-          onClick={handleGoogleSignUp}
-        >
-          <img
-            src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png"
-            alt="Google Icon"
-            className="w-6 h-6"
-          />
-          Sign up with Google
-        </button>
+        
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <GoogleSignIn buttonText="Sign up with Google" />
+        </GoogleOAuthProvider>
+
         <div className="relative mb-6">
           <hr className="border-gray-600" />
           <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 px-2 text-gray-400 text-sm">
