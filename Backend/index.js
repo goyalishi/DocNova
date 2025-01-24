@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 require("dotenv").config();
-require("./models/db");
+require("./models/db.js");
 const PORT = process.env.PORT || 3000;
 const options = {
   origin: `${process.env.SERVER_URL}`,
