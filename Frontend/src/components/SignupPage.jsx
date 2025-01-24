@@ -89,7 +89,7 @@ const SignupPage = () => {
           Create your Google Account
         </h1>
         <p className="text-black text-center mb-6">
-          to continue to Google Docs
+          to continue to DocNova
         </p>
         <button
           className="w-full flex items-center justify-center gap-2 bg-gray-300 border border-gray-600 rounded-lg py-2 px-4  hover:bg-gray-400 transition duration-300 ease-in-out mb-4"

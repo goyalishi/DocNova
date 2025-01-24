@@ -5,6 +5,7 @@ import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import Home from "./components/Home/Home";
 import RefreshHandler from "./RefreshHandler";
+import {GoogleOAuthProvider} from '@react-oauth/google'
 
 const App = () => {
 
@@ -14,6 +15,14 @@ const App = () => {
       return isAuthenticated ?element: <Navigate to ="/login"/>
   };
 
+  const GoogleAuthWrapper = ()=>{
+      return (
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+            <LoginPage/>
+          </GoogleOAuthProvider>
+      )
+  }
+
   return (
     <div className="App">
 
@@ -21,9 +30,10 @@ const App = () => {
       <RefreshHandler setisAuthenticated={setisAuthenticated}/>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<GoogleAuthWrapper />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/home" element={<PrivateRoute element={<Home/>} />}/>
+        <Route path='*' element={<h1>404 Page not Found</h1>}></Route>
       </Routes>
     </div>
   );
