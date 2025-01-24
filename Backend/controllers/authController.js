@@ -25,7 +25,7 @@ async function handleSignup(req, res) {
 }
 async function handleLogin(req, res) {
   try {
-    const {email, password } = req.body;
+    const { email, password } = req.body;
     //Checking user is already present
     const user = await UserModel.findOne({ email });
     const errMsg = "Authentication Failed ,email or password is wrong";
@@ -48,15 +48,13 @@ async function handleLogin(req, res) {
     );
     // sending jwtToken with the response
 
-    return res
-      .status(200)
-      .json({
-        msg: "Login successfull",
-        success: true,
-        jwtToken,
-        name: user.name,
-        email,
-      });
+    return res.status(200).json({
+      msg: "Login successfull",
+      success: true,
+      jwtToken,
+      name: user.name,
+      email,
+    });
   } catch (err) {
     return res.status(500).json({
       message: "Internal Server Error",

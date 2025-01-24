@@ -6,16 +6,21 @@ const cors = require("cors");
 require("dotenv").config();
 require("./models/db");
 const PORT = process.env.PORT || 3000;
+const options = {
+  origin: `${process.env.SERVER_URL}`,
+  methods: "GET,POST,PUT,PATCH,DELETE",
+  credentials: true,
+};
 
-const authRouter = require("./routes/authROutes");
-const homeRouter = require('./routes/homeRoutes.js');
+const authRouter = require("./routes/authRoutes.js");
+const homeRouter = require("./routes/homeRoutes.js");
 
 //Middlewares
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(options));
 
 app.use("/auth", authRouter);
-app.use("/",homeRouter);
+app.use("/", homeRouter);
 
 //routes
 app.get("/", (req, res) => {
