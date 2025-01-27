@@ -1,0 +1,19 @@
+/* src/styles/GoogleDocsCloneHeader.css */
+
+.google-docs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.google-docs-header .logo img {
+  height: 30px;
+}
+
+.google-docs-header .user-profile img {
+  height: 40px;
+  border-radius: 50%;
+}
