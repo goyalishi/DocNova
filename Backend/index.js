@@ -7,7 +7,7 @@ require("dotenv").config();
 require("./models/db.js");
 const PORT = process.env.PORT || 3000;
 const options = {
-  origin: `${process.env.SERVER_URL}`,
+  origin: `${process.env.CLIENT_URL}`,
   methods: "GET,POST,PUT,PATCH,DELETE",
   credentials: true,
 };
