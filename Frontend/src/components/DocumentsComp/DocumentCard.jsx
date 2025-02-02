@@ -1,8 +1,8 @@
 import React from "react";
 
-const DocumentCard = ({ title, lastEdited }) => {
+const DocumentCard = ({ title, lastEdited,onClick,className }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg">
+    <div onClick ={onClick} className={`bg-white rounded-lg shadow-md p-4 hover:shadow-lg ${className}`}>
       <h4 className="text-lg font-medium text-gray-800">{title}</h4>
       <p className="text-sm text-gray-500 mt-1 flex items-center space-x-2">
         <span className="icon">📄</span>

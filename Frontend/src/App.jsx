@@ -29,7 +29,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/home" element={<PrivateRoute element={<DocumentHome/>} />}/>
-        <Route path="/editor" element={<Editor documentId="doc1" />}></Route>
+        <Route path="/editor/:id" element={<Editor />} />
         <Route path='*' element={<h1>404 Page not Found</h1>}></Route>
       </Routes>
     </div>

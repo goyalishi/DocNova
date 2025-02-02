@@ -15,6 +15,7 @@ const Header = () => {
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user-info");
+    localStorage.removeItem("loggedInUser");
     toast.success("Logged out Successfully");
     setTimeout(() => {
       navigate("/login");

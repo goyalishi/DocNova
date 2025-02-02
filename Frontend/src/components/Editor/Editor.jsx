@@ -1,57 +1,107 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Save } from "lucide-react";
-import {useNavigate} from 'react-router-dom';
-
-
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'],        
-  ['blockquote', 'code-block'],
-  ['link', 'image', 'video', 'formula'],           
+  ["bold", "italic", "underline", "strike"],
+  ["blockquote", "code-block"],
+  ["link", "image", "video", "formula"],
 
-  [{ header: 1 }, { header: 2 }],                 
-  [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }], 
-  [{ script: 'sub' }, { script: 'super' }],        
-  [{ indent: '-1' }, { indent: '+1' }],            
-  [{ direction: 'rtl' }],                          
-  [{ size: ['small', false, 'large', 'huge'] }],   
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],         
+  [{ header: 1 }, { header: 2 }],
+  [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ indent: "-1" }, { indent: "+1" }],
+  [{ direction: "rtl" }],
+  [{ size: ["small", false, "large", "huge"] }],
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
 
-  [{ color: [] }, { background: [] }],             
+  [{ color: [] }, { background: [] }],
   [{ font: [] }],
-  [{ align: [] }],                                
+  [{ align: [] }],
 
-  ['clean']                                       
+  ["clean"],
 ];
 
-function Editor({ documentId}) {
+function Editor() {
+  const { id } = useParams();
+  const documentId = id;
 
-   
-
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("Untitled Document");
 
-  const handleChange = (value) => {
-    setContent(value);
+  useEffect(()=>{
+    async function loadDocument() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URI}/document/${id}`);
+        const data = response.data;
+        console.log(data);
+
+        setContent(data.content);
+        setTitle(data.title);
+      } catch (error) {
+        console.error("Error loading document:", error);
+      }
+    }
+
+    loadDocument();
+
+  },[id]);
+
+  async function fetchRecentDocuments() {
+    try {
+      const url = `${import.meta.env.VITE_APP_API_URI}/document/recent`;
+    const headers= {
+      headers :{'Authorization' : localStorage.getItem('token')}
+    }
+      const response = await axios.get(url,headers);
+      console.log(response.data);
+
+      setRecentDocs(response.data);
+      
+    } catch (error) {
+        console.log("Error fetching recent Documents:",error);
+        
+    }
+    
+  }
+
+
+  const handleChange = (content, delta, source, editor) => {
+    setContent(editor.getContents());
   };
 
-  const handleSave = () => {
-    console.log("Saving document:", documentId, content);
-    navigate('/home');
+  const handleSave = async () => {
+    try {
+      const url = `${import.meta.env.VITE_APP_API_URI}/document/${id}`;
+      const response = await axios.put(
+        url,
+        { content, title },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchRecentDocuments();
+      console.log("Saving document-Id:", documentId);
+      console.log("Updated Document:", response.data.updatedDoc);
+      navigate("/home");
+      toast.success(response.data.msg);
+    } 
+    catch (error) {
+      console.error("Error saving document:", error);
+    }
   };
-
-
-  
 
   const modules = {
-    toolbar: toolbarOptions
+    toolbar: toolbarOptions,
   };
-
-  
 
   return (
     <div className="w-full h-screen flex flex-col bg-gray-100 ">
@@ -79,7 +129,6 @@ const navigate = useNavigate();
       </div>
 
       <div className="flex-1  p-4 lg:w-[60vw] lg:mx-auto overflow-auto">
-      
         <ReactQuill
           theme="snow"
           value={content}

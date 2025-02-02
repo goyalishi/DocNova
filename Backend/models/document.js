@@ -2,16 +2,13 @@ const mongoose = require("mongoose");
 
 const documentSchema = new mongoose.Schema(
   {
-    _id:{
-      type:String,
-      required:true,
-    },
     title: {
       type: String,
       required: true,
+      default:"Untitled Document",
     },
     content: {
-      type: String,
+      type: Object,
       required: true,
     },
     author: {
