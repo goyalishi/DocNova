@@ -14,6 +14,7 @@ const options = {
 
 const authRouter = require("./routes/authRoutes.js");
 const homeRouter = require("./routes/homeRoutes.js");
+const docRouter = require("./routes/documentRoutes");
 
 //Middlewares
 app.use(bodyParser.json());
@@ -21,6 +22,7 @@ app.use(cors(options));
 
 app.use("/auth", authRouter);
 app.use("/", homeRouter);
+app.use("/document",docRouter);
 
 //routes
 app.get("/", (req, res) => {
