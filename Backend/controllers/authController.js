@@ -1,20 +1,19 @@
-const {UserModel} = require("../models/user");
+const { UserModel } = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 async function handleSignup(req, res) {
   try {
     const { name, email, password } = req.body;
-    
+    console.log(name + email);
     //Checking user is already present
-    const user = await UserModel.findOne({ email })
-    
+    const user = await UserModel.findOne({ email });
+
     if (user) {
       return res
         .status(409)
         .json({ msg: "User already exists, you can login", success: false });
     }
-    
 
     const userModel = new UserModel({ name, email, password });
     userModel.password = await bcrypt.hash(password, 10);
@@ -32,7 +31,7 @@ async function handleLogin(req, res) {
   try {
     const { email, password } = req.body;
     //Checking user is already present
-    
+
     const user = await UserModel.findOne({ email });
     const errMsg = "Authentication Failed ,email or password is wrong";
 

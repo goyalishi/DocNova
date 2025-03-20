@@ -13,15 +13,22 @@ const documentSchema = new mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
       required: true,
     },
-
+    authorType:{
+      type: String,
+      enum: ['User','GoogleUser' ],
+      required:true,
+    },
     collaborators: [
       {
         userId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          required: true,
+        },
+        userType: {
+          type: String,
+          enum: ["User", "GoogleUser"], // Distinguish the model
           required: true,
         },
       },

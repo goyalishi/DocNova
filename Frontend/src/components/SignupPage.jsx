@@ -31,7 +31,7 @@ const SignupPage = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     const { name, email, password, confirmPass } = signUpData;
-
+    
     if (password !== confirmPass) {
       alert("Passwords do not match!");
       return;
@@ -58,7 +58,8 @@ const SignupPage = () => {
       console.log(response.data);
 
       const { msg, success } = response.data;
-
+      console.log(msg);
+      
       if (success) {
         toast.success(msg);
         setTimeout(() => {

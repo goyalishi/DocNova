@@ -4,12 +4,13 @@ async function createNewDocument(req, res) {
   try {
     const { title, content } = req.body;
     const author = req.userId;
-
+    const authorType = req.userType;
     const newDoc = new Document({
       title,
       content,
       author,
-      collaborators: [{ userId: author }],
+      authorType,
+      collaborators: [{ userId: author, userType: authorType }],
     });
     console.log(newDoc);
 
@@ -22,7 +23,8 @@ async function createNewDocument(req, res) {
 
 async function getDocument(req, res) {
   try {
-    const doc = await Document.findById(req.params.id);
+    const docId = req.params.id;
+    const doc = await Document.findById(docId);
 
     if (!doc) {
       return res
@@ -38,6 +40,8 @@ async function getDocument(req, res) {
 async function updateDocument(req, res) {
   try {
     const { content, title } = req.body;
+    console.log(content);
+
     const updatedDoc = await Document.findByIdAndUpdate(
       req.params.id,
       { content, title, updatedAt: Date.now() },
@@ -72,7 +76,7 @@ async function getRecentDocs(req, res) {
       .sort({ updated: -1 })
       .limit(10);
 
-      console.log(recentDocs);
+    console.log(recentDocs);
 
     res.status(200).json(recentDocs);
   } catch (err) {

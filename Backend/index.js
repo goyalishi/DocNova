@@ -17,6 +17,7 @@ const homeRouter = require("./routes/homeRoutes.js");
 const docRouter = require("./routes/documentRoutes");
 
 //Middlewares
+app.use(express.json({ limit: "100mb" }));
 app.use(bodyParser.json());
 app.use(cors(options));
 

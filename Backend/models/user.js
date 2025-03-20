@@ -33,4 +33,14 @@ const googleUserSchema = new mongoose.Schema({
 const UserModel = mongoose.model('users',userSchema);
 const GoogleUserModel = mongoose.model('googleUser',googleUserSchema);
 
-module.exports = {UserModel,GoogleUserModel};
+async function getUserType(userId){
+    const isUser = await UserModel.exists({_id:userId});
+    if(isUser) return "User";
+
+    const isGoogleUser = await GoogleUserModel.exists({_id:userId});
+    if(isGoogleUser) return "GoogleUser";
+
+    return null;
+}
+
+module.exports = {UserModel,GoogleUserModel,getUserType};
