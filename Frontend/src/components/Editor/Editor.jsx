@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef,useCallback } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Save } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { initSocket } from "../../services/socket";
+import _ from "lodash";
+
+
+import {sendChanges as sndChanges,saveToDatabase as saveToDb} from '../../utils/socketManager';
 
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"],
@@ -31,18 +36,26 @@ function Editor() {
   const documentId = id;
 
   const navigate = useNavigate();
+  const socketRef = useRef(null);
+  const quillRef= useRef(null);
 
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("Untitled Document");
+
+  let userId= JSON.parse(localStorage.getItem("user-info"))?.email;
+  // using email of user as its userId
+
 
   useEffect(()=>{
     async function loadDocument() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_APP_API_URI}/document/${id}`);
         const data = response.data;
-        console.log(data);
+        // console.log(data);
 
         setContent(data.content);
+        
+        localStorage.setItem(`doc_${id}`,JSON.stringify(data.content));
         setTitle(data.title);
       } catch (error) {
         console.error("Error loading document:", error);
@@ -52,6 +65,62 @@ function Editor() {
     loadDocument();
 
   },[id]);
+
+  //initializing socket and joining new user as a collaborator
+  useEffect(()=>{
+    socketRef.current=initSocket();
+    
+    if(id){
+      if(!userId)
+        userId="Collaborator"
+      }
+      socketRef.current.emit("join-doc",{id,userId});
+      
+      const savedDraft = JSON.parse(localStorage.getItem(`doc_${id}`));
+      if(savedDraft) setContent(savedDraft);
+
+    return()=>{
+      socketRef.current.disconnect();
+    }
+  },[id]);
+
+// updating local storage on content change
+  // useEffect(()=>{
+  //   if(id && content){
+  //     localStorage.setItem(`doc_${id}`,JSON.stringify(content));
+  //     sendChanges(content);
+  //     saveToDatabase(id,content);
+  //   }
+  // },[content,id]);
+
+  useEffect(() => {
+    const debouncedLocalSave = _.debounce(() => {
+      if (id && content) {
+        localStorage.setItem(`doc_${id}`, JSON.stringify(content));
+      }
+    }, 1000);
+  
+    debouncedLocalSave();
+  
+    return () => {
+      debouncedLocalSave.cancel();
+    };
+  }, [content, id]);
+  
+  // 2. For saving to database (more aggressively debounced)
+  useEffect(() => {
+    const debouncedDbSave = _.debounce(async () => {
+      if (id && content) {
+        await saveToDb(id, content);
+      }
+    }, 5000);
+  
+    debouncedDbSave();
+  
+    return () => {
+      debouncedDbSave.cancel();
+    };
+  }, [content, id]);
 
   async function fetchRecentDocuments() {
     try {
@@ -72,8 +141,27 @@ function Editor() {
   }
 
 
+  useEffect(()=>{
+    const quillEditor= quillRef.current?.getEditor();
+
+    socketRef.current.on("receive-changes",({userId:senderId,delta})=>{
+      if(senderId!==userId && quillEditor){
+        quillEditor.updateContents(delta);
+        
+      }
+    });
+
+    return()=>{
+      socketRef.current.off("receive-changes");
+    }
+  },[userId]);
+
+
   const handleChange = (content, delta, source, editor) => {
-    setContent(editor.getContents());
+    if (source === 'user') {
+      setContent(editor.getContents());
+      sendChanges(delta);
+    }
   };
 
   const handleSave = async () => {
@@ -90,7 +178,7 @@ function Editor() {
       );
       fetchRecentDocuments();
       console.log("Saving document-Id:", documentId);
-      console.log("Updated Document:", response.data.updatedDoc);
+      // console.log("Updated Document:", response.data.updatedDoc);
       navigate("/home");
       toast.success(response.data.msg);
     } 
@@ -98,6 +186,14 @@ function Editor() {
       console.error("Error saving document:", error);
     }
   };
+
+  const sendChanges = useCallback((delta)=>{
+    sndChanges(id,userId,socketRef,delta);
+  },[id,userId]);
+
+  const saveToDatabase = useCallback(_.debounce(async(id,finalContent)=>{
+    await saveToDb(id,finalContent);
+  },5000),[id]);
 
   const modules = {
     toolbar: toolbarOptions,
@@ -130,6 +226,7 @@ function Editor() {
 
       <div className="flex-1  p-4 lg:w-[60vw] lg:mx-auto overflow-auto">
         <ReactQuill
+        ref={quillRef}
           theme="snow"
           value={content}
           onChange={handleChange}
