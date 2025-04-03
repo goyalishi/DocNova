@@ -84,9 +84,29 @@ async function getRecentDocs(req, res) {
   }
 }
 
+async function getAllDocuments(req, res) {
+  try {
+    console.log("hii");
+    
+    const userId = req.userId;
+    console.log(userId);
+    
+    const allDocs = await Document.find({
+      $or: [{ author: userId }, { "collaborators.userId": userId }],
+    }).sort({updatedAt:-1});
+    console.log(allDocs);
+    
+    res.status(200).json({ success: true,msg:"All documents fetched", documents: allDocs });
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 module.exports = {
   createNewDocument,
   getDocument,
+  getAllDocuments,
   updateDocument,
   deleteDocument,
   getRecentDocs,

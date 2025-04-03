@@ -18,6 +18,7 @@ const saveToDatabase = async(id,finalContent)=>{
           {
             headers: {
               "Content-Type": "application/json",
+              'Authorization' : localStorage.getItem('token'),
             },
           }
         );

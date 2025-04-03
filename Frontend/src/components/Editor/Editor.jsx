@@ -49,7 +49,14 @@ function Editor() {
   useEffect(()=>{
     async function loadDocument() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_APP_API_URI}/document/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URI}/document/${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization' : localStorage.getItem('token'),
+            },
+          }
+        );
         const data = response.data;
         // console.log(data);
 
@@ -72,7 +79,8 @@ function Editor() {
     
     if(id){
       if(!userId)
-        userId="Collaborator"
+        console.log("userId does not exists!!");
+        
       }
       socketRef.current.emit("join-doc",{id,userId});
       
@@ -173,6 +181,7 @@ function Editor() {
         {
           headers: {
             "Content-Type": "application/json",
+            'Authorization' : localStorage.getItem('token'),
           },
         }
       );

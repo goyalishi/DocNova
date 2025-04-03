@@ -35,13 +35,6 @@ const Header = () => {
         />
         <h1 className="text-xl font-semibold text-gray-800">DocNova</h1>
       </div>
-      <div className="flex items-center space-x-6 md:w-[60vw] sm:w-auto mx-auto gap-4">
-        <input
-          type="text"
-          placeholder="Search documents"
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full outline-none "
-        />
-      </div>
       <div
         className="w-10 h-10 rounded-full bg-fuchsia-700 flex items-center justify-center text-white font-bold cursor-pointer "
         onClick={toggleDropdown}

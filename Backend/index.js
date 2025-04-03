@@ -40,10 +40,6 @@ app.get("/", (req, res) => {
   res.send("Welcome to Express");
 });
 
-app.get("/api/test", (req, res) => {
-  res.json({ success: true, message: "Frontend and backend are connected!" });
-});
-
 // socket-io connection
 io.on('connection',(socket)=>{
   console.log('socket connected',socket.id);

@@ -21,11 +21,10 @@ const ensureAuthenticated = async(req, res, next) => {
     }
     req.userType = userType;
     // console.log(decoded);
-    console.log(req.userId);
-    console.log(req.userType);
-    
-    
+    // console.log(req.userId);
+    // console.log(req.userType);
     next();
+    
   } catch (error) {
     return res
       .status(403)

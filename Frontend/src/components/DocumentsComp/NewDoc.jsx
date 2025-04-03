@@ -1,5 +1,6 @@
 import React from "react";
 import axios from 'axios';
+import { GrDocumentText } from "react-icons/gr";
 
 import { useNavigate } from "react-router-dom";
 
@@ -50,6 +51,12 @@ const NewDoc = ({fetchRecentDocuments}) => {
       </p>
       <button onClick={createNewDocHandler} className="bg-blue-500 text-white px-6 py-2 mt-4 rounded-lg hover:bg-blue-600 max-w-[300px]">
         + Create New Document
+      </button>
+      <button onClick={()=>{navigate('/myDocs')}} className="bg-purple-500 text-white px-6 py-2 mt-4 rounded-lg hover:bg-purple-600 max-w-[300px]">
+        <div className="flex flex-row gap-2 items-center">
+          <GrDocumentText size={20}/>
+          <p>View all Documents</p>
+        </div>
       </button>
     </section>
   );
