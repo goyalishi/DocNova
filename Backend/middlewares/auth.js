@@ -10,8 +10,11 @@ const ensureAuthenticated = async(req, res, next) => {
   }
 
   try {
+    console.log("Middleware me entry");
     
     const decoded = jwt.verify(auth, process.env.JWT_SECRET);
+    console.log(decoded?decoded:"Gadbad");
+    
     req.user = decoded;
     req.userId= decoded._id;
     const userType = await getUserType(decoded._id);
@@ -21,6 +24,7 @@ const ensureAuthenticated = async(req, res, next) => {
     }
     req.userType = userType;
     // console.log(decoded);
+
     // console.log(req.userId);
     // console.log(req.userType);
     next();

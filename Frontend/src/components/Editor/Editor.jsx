@@ -31,7 +31,7 @@ const toolbarOptions = [
   ["clean"],
 ];
 
-function Editor() {
+  function Editor() {
   const { id } = useParams();
   const documentId = id;
 
@@ -155,6 +155,7 @@ function Editor() {
     socketRef.current.on("receive-changes",({userId:senderId,delta})=>{
       if(senderId!==userId && quillEditor){
         quillEditor.updateContents(delta);
+        localStorage.setItem(`doc_${id}`);
         
       }
     });
@@ -186,7 +187,8 @@ function Editor() {
         }
       );
       fetchRecentDocuments();
-      console.log("Saving document-Id:", documentId);
+      localStorage.removeItem(`doc_${id}`);
+      // console.log("Saving document-Id:", documentId);
       // console.log("Updated Document:", response.data.updatedDoc);
       navigate("/home");
       toast.success(response.data.msg);
