@@ -7,7 +7,7 @@ const {Server} = require('socket.io');
 
 require("dotenv").config();
 require("./models/db.js");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 const options = {
   origin: `${process.env.CLIENT_URL}`,
   methods: "GET,POST,PUT,PATCH,DELETE",
